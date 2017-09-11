@@ -1,0 +1,27 @@
+{% extends "layout.html" %}
+
+{% block head %}
+
+<style>
+    #map {
+        height: 100vh;
+    }
+</style>
+
+{% endblock %}
+
+{% block title %}
+    Map
+{% endblock %}
+
+{% block main %}
+
+<div class="container-fluid">
+    <div id="map"></div>
+
+    <script type="text/javascript"
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDxT2n7mlcGsY5iao8S_AeRa0RY0cMfs7I">
+    </script>
+    <script type="text/javascript" src="{{ url_for('static', filename='mapscripts.js') }}"></script>
+</div>
+{% endblock %}
