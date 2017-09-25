@@ -40,7 +40,7 @@
                 </ul>
                 {% elif session.user_id %}
                 <ul class="nav navbar-nav navbar-right">
-                    <li><a href="{{ url_for('index') }}">Edit map</a></li>
+                    <li><a href="{{ url_for('edittrucks') }}">Edit Trucks</a></li>
                     <li><a href="{{ url_for('logout') }}">Log out</a></li>
                 </ul>
                 {% endif %}

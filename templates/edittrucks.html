@@ -1,0 +1,79 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Edit Trucks
+{% endblock %}
+
+{% block main %}
+    <!-- error handling message -->
+    {% if error %}
+        <p class=error><strong>{{ error }}</strong>
+    {% endif %}
+    <!-- form layout -->
+    <form action="{{ url_for('edittrucks') }}" method="post">
+        <fieldset>
+            <div class="col-md-6 col-md-offset-3">
+                <div class="form-group">
+                    <input autocomplete="off" autofocus class="form-control" id="origin" name="origin" placeholder="Origin" type="text"/>
+                </div>
+                <div class="form-group">
+                    <input class="form-control" id="destination" name="destination" placeholder="Destination" type="text"/>
+                </div>
+                <div class="form-group">
+                    <select class="form-control" name="trailer">
+                        <option>Step deck</option>
+                        <option>Dump</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <textarea class="form-control" rows="3" name="comments" placeholder="Comments"></textarea>
+                </div>
+                <div class="form-group">
+                    <button class="btn btn-default" type="submit" name="submit" value="submit">Submit</button>
+                </div>
+            </div>
+        </fieldset>
+    </form>
+
+    <table class="table table-striped" id="trucktable">
+        <thead>
+            <tr>
+                <th>Destination</th>
+                <th>Origin</th>
+                <th>Trailer</th>
+                <th>Comments</th>
+            </tr>
+        </thead>
+        <tbody>
+            <form action="{{ url_for('edittrucks') }}" method="post">
+                {% for trucks in trucks %}
+                <tr>
+                    <td>{{ trucks.origin }}</td>
+                    <td>{{ trucks.destination }}</td>
+                    <td>{{ trucks.trailer }}</td>
+                    <td>{{ trucks.comments }}</td>
+                    <div class="form-group">
+                        <td><button class="btn btn-danger" type="submit" name="delete" value="{{ trucks.comments }}">Delete</button></td>
+                    </div>
+                </tr>
+                {% endfor %}
+            </form>
+        </tbody>
+    </table>
+
+    <script>
+        var origin, destination;
+
+        function initAutocomplete() {
+            origin = new google.maps.places.Autocomplete((document.getElementById('origin')),
+            {types: ['geocode']});
+
+            destination = new google.maps.places.Autocomplete((document.getElementById('destination')),
+            {types: ['geocode']});
+        }
+    </script>
+
+    <script type="text/javascript"
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDxT2n7mlcGsY5iao8S_AeRa0RY0cMfs7I&libraries=places&callback=initAutocomplete">
+    </script>
+{% endblock %}
