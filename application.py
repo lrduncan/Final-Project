@@ -104,7 +104,7 @@ def edittrucks():
             return redirect(url_for("edittrucks"))
         elif request.form.get("delete"):
 
-            truckdelete = Trucks.query.filter_by(comments=request.form["delete"]).first()
+            truckdelete = Trucks.query.filter_by(id=request.form["delete"]).first()
             db.session.delete(truckdelete)
             db.session.commit()
 
