@@ -2,7 +2,6 @@ from flask import Flask, url_for, render_template, session, request, redirect, j
 from flask_sqlalchemy import SQLAlchemy
 from passlib.hash import argon2
 from functools import wraps
-from marshmallow import Schema, fields
 import googlemaps
 
 app = Flask(__name__)
@@ -38,13 +37,6 @@ class Trucks(db.Model):
         self.destination = destination
         self.trailer = trailer
         self.comments = comments
-
-class TruckSchema(Schema):
-    id = fields.Str()
-    origin = fields.Str()
-    destination = fields.Str()
-    trailer = fields.Str()
-    comments = fields.Str()
 
 @app.route('/')
 def index():
@@ -130,10 +122,16 @@ def trucklocations():
 @app.route('/markers')
 def markers():
     markers = []
-    truck = Trucks.query.all()
+
+    # Used link to fix problem with querying by id when max id value is not consecutive
+    #(https://stackoverflow.com/questions/43673173/how-can-sqlalchemy-get-the-maximum-value-of-a-field)
+
+    truck = Trucks.query.filter(Trucks.id).order_by(Trucks.id.desc()).first()
+
     gmaps = googlemaps.Client(key="AIzaSyDxT2n7mlcGsY5iao8S_AeRa0RY0cMfs7I")
-    for x in range(len(truck)):
+    for x in range(truck.id):
         lookup = Trucks.query.get(x+1)
-        geocode_result = gmaps.geocode(lookup.destination)
-        markers.append(geocode_result[0]["geometry"]["location"])
+        if lookup != None:
+            geocode_result = gmaps.geocode(lookup.destination)
+            markers.append(geocode_result[0]["geometry"]["location"])
     return jsonify(markers)
