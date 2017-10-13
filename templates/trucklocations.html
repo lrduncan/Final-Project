@@ -1,0 +1,34 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Edit Trucks
+{% endblock %}
+
+{% block main %}
+    <!-- error handling message -->
+    {% if error %}
+        <p class=error><strong>{{ error }}</strong>
+    {% endif %}
+
+    <table class="table table-striped" id="trucktable">
+        <thead>
+            <tr>
+                <th>Origin</th>
+                <th>Destination</th>
+                <th>Trailer</th>
+                <th>Comments</th>
+            </tr>
+        </thead>
+        <tbody>
+                {% for trucks in trucks %}
+                <tr>
+                    <td>{{ trucks.origin }}</td>
+                    <td>{{ trucks.destination }}</td>
+                    <td>{{ trucks.trailer }}</td>
+                    <td>{{ trucks.comments }}</td>
+                </tr>
+                {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}

@@ -1,7 +1,9 @@
-from flask import Flask, url_for, render_template, session, request, redirect
+from flask import Flask, url_for, render_template, session, request, redirect, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from passlib.hash import argon2
 from functools import wraps
+from marshmallow import Schema, fields
+import googlemaps
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///project.db'
@@ -22,6 +24,7 @@ class User(db.Model):
         self.hashword = hashword
 
 class Trucks(db.Model):
+    #SQL Alchemy class for Trucks table
 
     __tablename__ = 'trucks'
     id = db.Column(db.Integer, primary_key=True)
@@ -35,6 +38,13 @@ class Trucks(db.Model):
         self.destination = destination
         self.trailer = trailer
         self.comments = comments
+
+class TruckSchema(Schema):
+    id = fields.Str()
+    origin = fields.Str()
+    destination = fields.Str()
+    trailer = fields.Str()
+    comments = fields.Str()
 
 @app.route('/')
 def index():
@@ -66,7 +76,7 @@ def login():
     else:
         return render_template("login.html")
 
-@app.route("/logout")
+@app.route('/logout')
 def logout():
 
     session.clear()
@@ -111,3 +121,19 @@ def edittrucks():
             return redirect(url_for("edittrucks"))
     trucks = Trucks.query.all()
     return render_template("edittrucks.html", trucks=trucks)
+
+@app.route('/trucklocations')
+def trucklocations():
+    trucks = Trucks.query.all()
+    return render_template("trucklocations.html", trucks=trucks)
+
+@app.route('/markers')
+def markers():
+    markers = []
+    truck = Trucks.query.all()
+    gmaps = googlemaps.Client(key="AIzaSyDxT2n7mlcGsY5iao8S_AeRa0RY0cMfs7I")
+    for x in range(len(truck)):
+        lookup = Trucks.query.get(x+1)
+        geocode_result = gmaps.geocode(lookup.destination)
+        markers.append(geocode_result[0]["geometry"]["location"])
+    return jsonify(markers)
