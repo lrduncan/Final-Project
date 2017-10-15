@@ -129,9 +129,11 @@ def markers():
     truck = Trucks.query.filter(Trucks.id).order_by(Trucks.id.desc()).first()
 
     gmaps = googlemaps.Client(key="AIzaSyDxT2n7mlcGsY5iao8S_AeRa0RY0cMfs7I")
+
     for x in range(truck.id):
         lookup = Trucks.query.get(x+1)
         if lookup != None:
             geocode_result = gmaps.geocode(lookup.destination)
             markers.append(geocode_result[0]["geometry"]["location"])
+            markers.append({"comments": lookup.comments})
     return jsonify(markers)

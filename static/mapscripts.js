@@ -1,6 +1,7 @@
 var map;
 var geocoder;
 var markers = [];
+var counter = 0;
 
 $(function () {
 
@@ -32,7 +33,10 @@ function update()
   .done(function(data, textStatus, jqXHR){
         for (var i = 0; i < data.length; i++)
         {
+          if (i % 2 == 0)
             addMarker(data[i]);
+          else
+            addInfo(data[i]);
         }
   })
   .fail(function(jqXHR, textStatus, errorThrown) {
@@ -43,10 +47,34 @@ function update()
 
 function addMarker(place)
 {
-    var myLatLng = {lat: place.lat, lng: place.lng};
+  var myLatLng = {lat: place.lat, lng: place.lng};
 
-    var marker = new google.maps.Marker({
-        position: myLatLng,
-        map: map,
+  var marker = new google.maps.Marker({
+      position: myLatLng,
+      map: map,
+  });
+
+  markers.push(marker);
+
+}
+
+function addInfo(place)
+{
+  var windowcontent = place.comments;
+
+  var infowindow = new google.maps.InfoWindow({
+    content: windowcontent
+  });
+
+  var marker = markers[counter];
+
+  if (marker != undefined)
+    marker.addListener('click', function() {
+      infowindow.open(map, marker);
     });
+    google.maps.event.addListener(map, 'click', function() {
+      infowindow.close();
+    });
+
+  counter++;
 }
